@@ -32,6 +32,7 @@ import inspect
 import json
 import socket
 
+import jsonpickle
 import zmq
 from jsonrpc import JSONRPCResponseManager
 
@@ -370,9 +371,10 @@ class ControlServer:
 
             try:
                 response = JSONRPCResponseManager.handle(request, self._exposed_object)
-                self._socket.send_unicode(response.json)
+                self._socket.send_string(jsonpickle.dumps(response))
 
-                self.log.debug("Sent response %s", response.json)
+                self.log.debug("Sent response %s", jsonpickle.dumps(response))
+
             except TypeError as e:
                 self._socket.send_json(
                     self._unhandled_exception_response(json.loads(request)["id"], e)
