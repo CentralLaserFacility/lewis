@@ -30,9 +30,9 @@ this infrastructure in :class:`~lewis.core.simulation.Simulation`.
 
 import inspect
 import json
+import pickle
 import socket
 
-import jsonpickle
 import zmq
 from jsonrpc import JSONRPCResponseManager
 
@@ -371,9 +371,9 @@ class ControlServer:
 
             try:
                 response = JSONRPCResponseManager.handle(request, self._exposed_object)
-                self._socket.send_string(jsonpickle.dumps(response))
+                self._socket.send_pyobj(response)
 
-                self.log.debug("Sent response %s", jsonpickle.dumps(response))
+                self.log.debug("Sent response %s", pickle.dumps(response))
 
             except TypeError as e:
                 self._socket.send_json(

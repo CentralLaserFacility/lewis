@@ -29,7 +29,6 @@ This module provides client code for objects exposed via JSON-RPC over ZMQ.
 import types
 import uuid
 
-import jsonpickle
 import zmq
 
 # This does not import .exceptions, because absolute_import from the __future__ module
@@ -119,7 +118,7 @@ class ControlClient:
             self._socket.send_json(
                 {"method": method, "params": args, "jsonrpc": "2.0", "id": request_id}
             )
-            json_rpc_response = jsonpickle.loads(self._socket.recv())
+            json_rpc_response = self._socket.recv_pyobj()
             response = {"result": json_rpc_response.result, "id": json_rpc_response._id}
             return response, request_id
         except zmq.error.Again:
